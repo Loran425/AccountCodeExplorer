@@ -1,0 +1,30 @@
+[project]
+name = "AccountCodeExplorer"
+version = "1.0.1"
+description = "Browser for Account Codes"
+authors = [
+    {name = "Andrew Arneson", email = "Loran425@gmail.com"}
+]
+
+dependencies = [
+    "peewee >= 3.17.6"
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff ~= 0.6.8",
+    "cx_Freeze ~= 7.2.2"
+]
+
+[tool.ruff]
+line-length = 120
+
+[tool.cxfreeze]
+executables = [
+    {script = "main.py", base = "gui", target_name = "Account Code Explorer", icon = "AccountCodeExplorer.ico"}
+]
+
+[tool.cxfreeze.build_exe]
+excludes = ["ruff"]
+include_files = ["default_config.ini", "AccountCodeExplorer.ico"]
+constants = "BUILD_COPYRIGHT=\"Copyright © 2024 Andrew Arneson\""
