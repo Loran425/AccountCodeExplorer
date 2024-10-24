@@ -313,6 +313,7 @@ class ExplorerApp:
         self.root.bind("<Control-i>", lambda e: self.import_account_codes())
         self.root.bind("<Control-q>", lambda e: self.on_close())
         self.root.bind("<Control-h>", lambda e: self.color_hierarchy.set(not self.color_hierarchy.get()))
+        self.root.bind("<F6>", lambda e: self.tree_panel.search_combobox.focus_set())
         self.root.bind("<<TreeviewSelect>>", self.on_tree_selection)
         self.root.bind("<Configure>", self.on_resize)
 
