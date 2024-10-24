@@ -1,11 +1,11 @@
 [project]
 name = "AccountCodeExplorer"
 version = "1.0.1"
-description = "Browser for Account Codes"
+description = "Account Code Explorer"
 authors = [
     {name = "Andrew Arneson", email = "Loran425@gmail.com"}
 ]
-
+requires-python = ">=3.12"
 dependencies = [
     "peewee >= 3.17.6"
 ]
@@ -16,8 +16,11 @@ dev = [
     "cx_Freeze ~= 7.2.2"
 ]
 
-[tool.ruff]
-line-length = 120
+[project.urls]
+Homepage = "https://github.com/Loran425/AccountCodeExplorer"
+Repository = "https://github.com/Loran425/AccountCodeExplorer.git"
+Issues = "https://github.com/Loran425/AccountCodeExplorer/issues"
+Releases = "https://github.com/Loran425/AccountCodeExplorer/releases"
 
 [tool.cxfreeze]
 executables = [
@@ -28,3 +31,10 @@ executables = [
 excludes = ["ruff"]
 include_files = ["default_config.ini", "AccountCodeExplorer.ico"]
 constants = "BUILD_COPYRIGHT=\"Copyright © 2024 Andrew Arneson\""
+
+[tool.ruff]
+line-length = 120
+
+[tool.uv]
+native-tls = true
+
