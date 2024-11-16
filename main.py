@@ -228,7 +228,12 @@ class DetailView:
 
     def save_personal_notes(self, event=None):
         if self.current_account_code:
-            self.current_account_code.personal_notes = self.pnotes_text.get("1.0", tk.END)
+            notes = self.pnotes_text.get("1.0", tk.END)
+            if notes.isspace():
+                notes = None
+            else:
+                notes = notes.rstrip()
+            self.current_account_code.personal_notes = notes
             self.current_account_code.save()
 
     def update(self, acct_code: AccountCode):
