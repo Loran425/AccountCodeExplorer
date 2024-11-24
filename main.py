@@ -639,6 +639,8 @@ class ExplorerApp:
 
     def show_about(self):
         about_popup = tk.Toplevel(self.root)
+        about_popup.withdraw()
+        about_popup.iconbitmap("AccountCodeExplorer.ico")
         about_popup.title("About")
         about_popup.resizable(False, False)
 
@@ -663,6 +665,8 @@ class ExplorerApp:
         copyright_label.pack(anchor="w")
         about_close_button = ttk.Button(about_popup, text="Close", command=about_popup.destroy)
         about_close_button.pack(pady=10)
+
+        about_popup.deiconify()
 
 
 if __name__ == "__main__":
