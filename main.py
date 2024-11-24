@@ -265,6 +265,7 @@ class DetailView:
 class ExplorerApp:
     def __init__(self, root):
         self.root = root
+        self.root.withdraw()
         self.root.title("Account Code Explorer")
 
         self.root.geometry("1440x814")
@@ -345,6 +346,9 @@ class ExplorerApp:
         self.config_load()
         self.database_init()
         self.tree_panel.populate_tree()
+
+        # Show the window
+        self.root.deiconify()
 
     #########################################################################
     # Configuration and Database Management
