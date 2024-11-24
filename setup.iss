@@ -16,7 +16,7 @@ PrivilegesRequired=lowest
 
 [Files]
 ; Include all files from the build directory
-Source: "build\exe.win-amd64-3.11\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "build\exe.win-amd64-3.12\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "default_config.ini"; DestDir: "{app}"; Flags: ignoreversion
 
 
