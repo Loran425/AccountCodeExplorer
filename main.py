@@ -1,14 +1,17 @@
 import configparser
+import json
 import os
 import re
 import threading
 import tkinter as tk
-from csv import DictReader, excel
+from csv import DictReader, DictWriter, excel
 from pathlib import Path
 from tkinter import filedialog, ttk, BooleanVar, messagebox
 from tkinter.ttk import Style
 
 import peewee
+
+from modals import ExportPopup
 
 version = "1.0.1"
 
@@ -299,6 +302,7 @@ class ExplorerApp:
         self.file_menu.add_command(
             label="Import Account Codes", command=self.import_account_codes, accelerator="Ctrl+I"
         )
+        self.file_menu.add_command(label="Export Personal Notes", command=self.export_notes)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.on_close, accelerator="Ctrl+Q")
 
@@ -581,6 +585,57 @@ class ExplorerApp:
             self.tree_panel.populate_tree()
 
         threading.Thread(target=import_process).start()
+
+    def export_account_codes(self):
+        pass
+
+    def export_notes(self):
+        # TODO: Add option to exclude notes not written by the current user
+        export_config = ExportPopup(self.root)
+        self.root.wait_window(export_config)
+
+        notes = {
+            "author": export_config.result.get("author", None),
+            "date": export_config.result.get("date", None),
+            "file": Path(export_config.result.get("file", None)),
+            "notes": dict()
+        }
+
+        for code in AccountCode.select():
+            if code.personal_notes:
+                notes["notes"][code.account_code] = code.personal_notes
+
+        if not notes["notes"]:
+            messagebox.showinfo("Export Notes", "No notes to export.")
+            return
+
+        if notes["file"].suffix == ".csv":
+            with open(notes["file"], "w", newline="") as f:
+                writer = DictWriter(f, fieldnames=["Account Code", "Personal Notes", "Author", "Date"])
+                writer.writeheader()
+                for acct_code, note in notes["notes"].items():
+                    writer.writerow(
+                        {
+                            "Account Code": acct_code,
+                            "Personal Notes": note,
+                            "Author": notes["author"],
+                            "Date": notes["date"],
+                        }
+                    )
+
+        elif notes["file"].suffix == ".json":
+            with open(notes["file"], "w") as f:
+                file = notes["file"]
+                del notes["file"]
+                json.dump(notes, f, indent=4)
+
+        else:
+            messagebox.showerror("Export Notes", f"Invalid file type returned [{notes["file"].suffix}]\nExport canceled")
+            return
+
+    def import_notes(self):
+        # TODO: import notes from a csv or json file, optionally overwrite existing notes or add author/date tags
+        pass
 
     def show_about(self):
         about_popup = tk.Toplevel(self.root)
