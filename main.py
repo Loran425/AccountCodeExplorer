@@ -11,9 +11,9 @@ from tkinter.ttk import Style
 
 import peewee
 
-from modals import ExportPopup
+from modals import ExportPopup, ImportPopup
 
-version = "1.0.1"
+version = "1.0.2"
 
 db = peewee.SqliteDatabase(None)
 
@@ -299,9 +299,10 @@ class ExplorerApp:
         self.file_menu.add_command(label="New Database", command=self.database_create, accelerator="Ctrl+N")
         self.file_menu.add_command(label="Open Database", command=self.database_open, accelerator="Ctrl+O")
         self.file_menu.add_separator()
-        self.file_menu.add_command(
-            label="Import Account Codes", command=self.import_account_codes, accelerator="Ctrl+I"
-        )
+        self.file_menu.add_command(label="Import Account Codes", command=self.import_account_codes)
+        self.file_menu.add_command(label="Export Account Codes", command=self.export_account_codes)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Import Personal Notes", command=self.import_notes)
         self.file_menu.add_command(label="Export Personal Notes", command=self.export_notes)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.on_close, accelerator="Ctrl+Q")
@@ -637,7 +638,51 @@ class ExplorerApp:
             return
 
     def import_notes(self):
-        # TODO: import notes from a csv or json file, optionally overwrite existing notes or add author/date tags
+        import_config = ImportPopup(self.root)
+        self.root.wait_window(import_config)
+
+        if not import_config.result:
+            return
+
+        file_path = import_config.result.get("file", None)
+        overwrite = import_config.result.get("overwrite", False)
+        annotate = import_config.result.get("annotate", False)
+
+        if not file_path:
+            return
+
+        if file_path.endswith(".csv"):
+            with open(file_path, "r") as f:
+                reader = DictReader(f)
+                for row in reader:
+                    if annotate:
+                        notes = f"{row['Author'] or 'Unknown'} {row['Date'] or 'Unknown'}: {row['Personal Notes']}"
+                    else:
+                        notes = row["Personal Notes"]
+                    acct_code = AccountCode.get(AccountCode.account_code == row["Account Code"])
+
+                    if overwrite:
+                        acct_code.personal_notes = notes
+                    else:
+                        acct_code.personal_notes = f"{acct_code.personal_notes}\n{notes}"
+
+                    acct_code.save()
+
+        elif file_path.endswith(".json"):
+            with open(file_path, "r") as f:
+                notes = json.load(f)
+                for acct_code, note in notes["notes"].items():
+                    acct_code = AccountCode.get(AccountCode.account_code == acct_code)
+                    if annotate:
+                        note = f"{notes['author'] or 'Unknown'} {notes['date'] or 'Unknown'}: {note}"
+
+                    if overwrite:
+                        acct_code.personal_notes = note
+                    else:
+                        acct_code.personal_notes = f"{acct_code.personal_notes}\n{note}"
+                    acct_code.save()
+
+        # TODO: Add method to prevent duplicate notes
         pass
 
     def show_about(self):
