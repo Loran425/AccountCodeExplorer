@@ -594,6 +594,9 @@ class ExplorerApp:
         export_config = ExportPopup(self.root)
         self.root.wait_window(export_config)
 
+        if not export_config.result:
+            return
+
         notes = {
             "author": export_config.result.get("author", None),
             "date": export_config.result.get("date", None),
