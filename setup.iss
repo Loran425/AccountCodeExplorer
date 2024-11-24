@@ -1,7 +1,7 @@
 [Setup]
 ; Basic information
 AppName=Account Code Explorer
-AppVersion=1.0.1
+AppVersion=1.0.2
 AppPublisher=Andrew Arneson
 AppPublisherURL=https://www.github.com/Loran425
 AppSupportURL=https://github.com/Loran425/AccountCodeExplorer/issues
