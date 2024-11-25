@@ -37,7 +37,7 @@ class ImportPopup(BasePopup):
         self.overwrite_label = ttk.Label(self.overwrite_frame, text="Overwrite Behavior:")
         self.overwrite_label.pack()
         self.overwrite_behavior = tk.IntVar()
-        self.amend_radio = tk.Radiobutton(self.overwrite_frame, text="Ammend", variable=self.overwrite_behavior, value=1)
+        self.amend_radio = tk.Radiobutton(self.overwrite_frame, text="Amend", variable=self.overwrite_behavior, value=1)
         self.amend_radio.pack()
         self.overwrite_radio = tk.Radiobutton(self.overwrite_frame, text="Overwrite", variable=self.overwrite_behavior, value=2)
         self.overwrite_radio.pack()
