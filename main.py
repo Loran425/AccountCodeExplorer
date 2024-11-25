@@ -48,6 +48,7 @@ class ExplorerApp:
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Import Account Codes", command=self.import_account_codes)
         self.file_menu.add_command(label="Export Account Codes", command=self.export_account_codes)
+        self.file_menu.entryconfig("Export Account Codes", state="disabled")
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Import Personal Notes", command=self.import_notes)
         self.file_menu.add_command(label="Export Personal Notes", command=self.export_notes)
