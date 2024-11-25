@@ -1,19 +1,18 @@
 import os
 import tkinter as tk
-from tkinter import ttk
-from tkcalendar import DateEntry
-from tkinter import filedialog
+from tkinter import filedialog, ttk
 
-class ExportPopup(tk.Toplevel):
+from tkcalendar import DateEntry
+
+from popups import BasePopup
+
+class ExportPopup(BasePopup):
     def __init__(self, parent):
         super().__init__(parent)
-        self.result = None
-        self.withdraw()
-
-        self.iconbitmap("AccountCodeExplorer.ico")
         self.title("Export Personal Notes")
         self.geometry("600x120")
         self.resizable(False, False)
+
         self.grid = ttk.Frame(self)
         self.grid.pack(expand=True, fill=tk.BOTH)
 
@@ -47,7 +46,7 @@ class ExportPopup(tk.Toplevel):
         self.export_button.pack(side=tk.RIGHT, padx=2.5, pady=2.5)
 
         self.center_window(parent)
-        self.deiconify()
+        self.deiconify() # BasePopup starts withdrawn, so we need to deiconify it
 
     def on_file_dialog(self):
         file_path = filedialog.asksaveasfilename(
@@ -62,26 +61,10 @@ class ExportPopup(tk.Toplevel):
 
         self.focus_set()
 
-    def center_window(self, parent):
-        self.update_idletasks()
-        parent_x = parent.winfo_rootx()
-        parent_y = parent.winfo_rooty()
-        parent_width = parent.winfo_width()
-        parent_height = parent.winfo_height()
-        window_width = self.winfo_width()
-        window_height = self.winfo_height()
-        x = parent_x + (parent_width // 2) - (window_width // 2)
-        y = parent_y + (parent_height // 2) - (window_height // 2)
-        self.geometry(f"+{x}+{y}")
-
     def on_export(self):
         self.result = {
             "file": self.file_entry.get(),
             "author": self.author_entry.get(),
             "date": self.date_entry.get(),
         }
-        self.destroy()
-
-    def on_cancel(self):
-        self.result = None
         self.destroy()
