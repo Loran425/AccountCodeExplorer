@@ -38,7 +38,7 @@ class DetailView:
             label = ttk.Label(self.frame, text=f"{flag_label_text}:")
             label.grid(row=i, column=2, sticky="w")
             var = BooleanVar(value=False)
-            checkbox = ttk.Checkbutton(self.frame, variable=var)
+            checkbox = ttk.Checkbutton(self.frame, variable=var, state="disabled")
             checkbox.grid(row=i, column=3, sticky="w")
             self.detail_widgets[flag] = var
 
