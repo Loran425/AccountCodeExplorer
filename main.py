@@ -8,6 +8,8 @@ from csv import DictReader, DictWriter, excel
 from pathlib import Path
 from tkinter import filedialog, ttk, BooleanVar, messagebox
 
+import screeninfo
+
 from models import AccountCode, db
 from popups import ExportPopup, ImportPopup, AboutPopup
 from widgets import TreePanel, DetailView
@@ -136,7 +138,29 @@ class ExplorerApp:
             size = "1440x814"
         if not re.match(r"^\+\d+\+\d+$", position) and position != "":
             print("Invalid window position format. Using default position.")
-            position = ""
+            position = "+50+50"
+
+        # TODO: consider moving this to a separate method
+        x, y = map(int, position.split("+")[1:])
+
+        monitors = screeninfo.get_monitors()
+        active_monitor = None
+        for m in monitors:
+            if m.x <= x <= m.x + m.width and m.y <= y <= m.y + m.height:
+                active_monitor = m
+                break
+
+        if active_monitor:
+            if (x-active_monitor.x) > active_monitor.width - 50:
+                x = active_monitor.x + active_monitor.width - 50
+            if (y-active_monitor.y) < 0:
+                y = active_monitor.y
+            elif (y-active_monitor.y) > active_monitor.height - 50:
+                y = active_monitor.y + active_monitor.height - 50
+            position = f"+{x}+{y}"
+        else:
+            print("Invalid window position. Using default position.")
+            position = "+50+50"
 
         self.root.geometry(size + position)
 
