@@ -401,7 +401,6 @@ class ExplorerApp:
 
         elif notes["file"].suffix == ".json":
             with open(notes["file"], "w") as f:
-                file = notes["file"]
                 del notes["file"]
                 json.dump(notes, f, indent=4)
 
