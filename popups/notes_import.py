@@ -39,7 +39,9 @@ class ImportPopup(BasePopup):
         self.overwrite_behavior = tk.IntVar()
         self.amend_radio = tk.Radiobutton(self.overwrite_frame, text="Amend", variable=self.overwrite_behavior, value=1)
         self.amend_radio.pack()
-        self.overwrite_radio = tk.Radiobutton(self.overwrite_frame, text="Overwrite", variable=self.overwrite_behavior, value=2)
+        self.overwrite_radio = tk.Radiobutton(
+            self.overwrite_frame, text="Overwrite", variable=self.overwrite_behavior, value=2
+        )
         self.overwrite_radio.pack()
         self.overwrite_frame.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=2.5, pady=2.5)
         self.options_group.pack(fill=tk.X)
@@ -52,7 +54,7 @@ class ImportPopup(BasePopup):
         self.export_button.pack(side=tk.RIGHT, padx=2.5, pady=2.5)
 
         self.center_window(parent)
-        self.deiconify() # BasePopup starts withdrawn, so we need to deiconify it
+        self.deiconify()  # BasePopup starts withdrawn, so we need to deiconify it
 
     def on_file_dialog(self):
         file_path = filedialog.askopenfilename(

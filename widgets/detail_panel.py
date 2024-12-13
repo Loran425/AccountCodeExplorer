@@ -4,6 +4,7 @@ from tkinter import BooleanVar, ttk
 from constants import AccountCodeFields, AccountCodeFlags
 from models import AccountCode
 
+
 class DetailView:
     def __init__(self, parent):
         self.frame = ttk.Frame(parent)

@@ -2,6 +2,7 @@ import peewee
 
 from . import db
 
+
 class AccountCode(peewee.Model):
     account_code = peewee.TextField()
     level = peewee.IntegerField()

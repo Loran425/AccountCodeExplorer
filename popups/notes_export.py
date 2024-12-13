@@ -6,6 +6,7 @@ from tkcalendar import DateEntry
 
 from popups import BasePopup
 
+
 class ExportPopup(BasePopup):
     def __init__(self, parent):
         super().__init__(parent)
@@ -46,7 +47,7 @@ class ExportPopup(BasePopup):
         self.export_button.pack(side=tk.RIGHT, padx=2.5, pady=2.5)
 
         self.center_window(parent)
-        self.deiconify() # BasePopup starts withdrawn, so we need to deiconify it
+        self.deiconify()  # BasePopup starts withdrawn, so we need to deiconify it
 
     def on_file_dialog(self):
         file_path = filedialog.asksaveasfilename(

@@ -14,6 +14,7 @@ from models import AccountCode, db
 from popups import ExportPopup, ImportPopup, AboutPopup
 from widgets import TreePanel, DetailView
 
+
 class ExplorerApp:
     def __init__(self, root):
         self.root = root
@@ -151,11 +152,11 @@ class ExplorerApp:
                 break
 
         if active_monitor:
-            if (x-active_monitor.x) > active_monitor.width - 50:
+            if (x - active_monitor.x) > active_monitor.width - 50:
                 x = active_monitor.x + active_monitor.width - 50
-            if (y-active_monitor.y) < 0:
+            if (y - active_monitor.y) < 0:
                 y = active_monitor.y
-            elif (y-active_monitor.y) > active_monitor.height - 50:
+            elif (y - active_monitor.y) > active_monitor.height - 50:
                 y = active_monitor.y + active_monitor.height - 50
             position = f"+{x}+{y}"
         else:
@@ -374,7 +375,7 @@ class ExplorerApp:
             "author": export_config.result.get("author", None),
             "date": export_config.result.get("date", None),
             "file": Path(export_config.result.get("file", None)),
-            "notes": dict()
+            "notes": dict(),
         }
 
         for code in AccountCode.select():
@@ -405,7 +406,9 @@ class ExplorerApp:
                 json.dump(notes, f, indent=4)
 
         else:
-            messagebox.showerror("Export Notes", f"Invalid file type returned [{notes["file"].suffix}]\nExport canceled")
+            messagebox.showerror(
+                "Export Notes", f"Invalid file type returned [{notes["file"].suffix}]\nExport canceled"
+            )
             return
 
     def import_notes(self):

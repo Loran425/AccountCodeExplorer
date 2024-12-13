@@ -3,6 +3,7 @@ from tkinter import ttk
 from constants import version
 from popups import BasePopup
 
+
 class AboutPopup(BasePopup):
     def __init__(self, parent):
         super().__init__(parent)
@@ -20,4 +21,4 @@ class AboutPopup(BasePopup):
         self.about_close_button.pack(pady=10)
 
         self.center_window(parent)
-        self.deiconify() # BasePopup starts withdrawn, so we need to deiconify it
+        self.deiconify()  # BasePopup starts withdrawn, so we need to deiconify it
