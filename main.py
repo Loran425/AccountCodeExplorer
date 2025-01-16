@@ -100,6 +100,9 @@ class ExplorerApp:
         self.app_config = configparser.ConfigParser()
         self.app_config_path: Path | None = None
         self.config_load()
+        # If no database has been selected abort startup
+        if not db.database:
+            return
         self.database_init()
         self.tree_panel.populate_tree()
 
@@ -265,10 +268,11 @@ class ExplorerApp:
         height = self.root.winfo_height() + 20  # Add 20 for the status bar TODO: Find a better way to do this
         self.app_config.set("window", "size", f"{width}x{height}")
         self.app_config.set("window", "position", f"+{x}+{y}")
-        self.app_config.set("database", "path", db.database)
+        if db.database:
+            self.app_config.set("database", "path", db.database)
+            db.commit()
+            db.close()
         self.app_config.write(open(self.app_config_path, "w"))
-        db.commit()
-        db.close()
         self.root.destroy()
 
     def on_color_hierarchy_change(self, *args):
