@@ -182,7 +182,7 @@ class ExplorerApp:
                 if response:
                     self.database_create()
                 else:
-                    exit()
+                    self.on_close()
 
     def config_create_default(self):
         config = configparser.ConfigParser()
