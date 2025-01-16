@@ -137,7 +137,7 @@ class ExplorerApp:
         if not re.match(r"^\d+x\d+$", size):
             print("Invalid window size format. Using default size.")
             size = "1440x814"
-        if not re.match(r"^\+\d+\+\d+$", position) and position != "":
+        if not re.match(r"^\+\d+\+\d+$", position):
             print("Invalid window position format. Using default position.")
             position = "+50+50"
 
@@ -191,7 +191,7 @@ class ExplorerApp:
         }
         config["window"] = {
             "size": "1440x814",
-            "position": "",
+            "position": "+50+50",
         }
         config["database"] = {
             "path": "account_code_viewer.sqlite",
