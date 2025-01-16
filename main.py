@@ -101,7 +101,7 @@ class ExplorerApp:
         self.app_config_path: Path | None = None
         self.config_load()
         # If no database has been selected abort startup
-        if not db.database:
+        if not self.app_config["database"].get("path", ""):
             return
         self.database_init()
         self.tree_panel.populate_tree()
