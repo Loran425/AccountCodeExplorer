@@ -101,7 +101,8 @@ class ExplorerApp:
         self.app_config_path: Path | None = None
         self.config_load()
         # If no database has been selected abort startup
-        if not self.app_config["database"].get("path", ""):
+        db_path = self.app_config["database"].get("path", "")
+        if not db_path or not Path(db_path).exists():
             return
         self.database_init()
         self.tree_panel.populate_tree()
@@ -186,6 +187,11 @@ class ExplorerApp:
                     self.database_create()
                 else:
                     self.on_close()
+
+        # If we still don't have a valid database path something has gone wrong, exit the program
+        db_path = self.app_config["database"].get("path", "")
+        if not db_path or not Path(db_path).exists():
+            messagebox.showerror("Database Error", "No database file selected. Exiting")
 
     def config_create_default(self):
         config = configparser.ConfigParser()
