@@ -37,6 +37,7 @@ constants = "BUILD_COPYRIGHT=\"Copyright © 2024 Andrew Arneson\""
 
 [tool.ruff]
 line-length = 120
+output-format = "concise"
 
 [tool.uv]
 native-tls = true
