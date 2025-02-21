@@ -61,7 +61,9 @@ class ExplorerApp:
 
         self.edit_menu = tk.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label="Edit", menu=self.edit_menu)
-        self.edit_menu.add_command(label="Advanced Search", command=partial(AdvancedSearchPopup, self.root) , accelerator="Ctrl+F")
+        self.edit_menu.add_command(
+            label="Advanced Search", command=partial(AdvancedSearchPopup, self.root), accelerator="Ctrl+F"
+        )
 
         self.view_menu = tk.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label="View", menu=self.view_menu)
@@ -482,6 +484,7 @@ class ExplorerApp:
     def show_about(self):
         about = AboutPopup(self.root)
         self.root.wait_window(about)
+
 
 if __name__ == "__main__":
     root = tk.Tk()

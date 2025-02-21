@@ -1,5 +1,6 @@
 from tkinter import ttk
 
+
 class PlaceholderEntry(ttk.Entry):
     def __init__(self, parent, placeholder, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)

@@ -8,6 +8,7 @@ from widgets import PlaceholderEntry
 from bitarray import bitarray
 from popups import BasePopup
 
+
 class AdvancedSearchPopup(BasePopup):
     def __init__(self, parent):
         super().__init__(parent)
@@ -25,11 +26,17 @@ class AdvancedSearchPopup(BasePopup):
         self.search_term.pack(fill=tk.X)
 
         self.search_desc_var = tk.BooleanVar()
-        self.search_desc = tk.Checkbutton(self.search_frame, text="Description", anchor=tk.W, variable=self.search_desc_var)
+        self.search_desc = tk.Checkbutton(
+            self.search_frame, text="Description", anchor=tk.W, variable=self.search_desc_var
+        )
         self.search_district_var = tk.BooleanVar()
-        self.search_district = tk.Checkbutton(self.search_frame, text="District Notes", anchor=tk.W, variable=self.search_district_var)
+        self.search_district = tk.Checkbutton(
+            self.search_frame, text="District Notes", anchor=tk.W, variable=self.search_district_var
+        )
         self.search_personal_var = tk.BooleanVar()
-        self.search_personal = tk.Checkbutton(self.search_frame, text="Personal Notes", anchor=tk.W, variable=self.search_personal_var)
+        self.search_personal = tk.Checkbutton(
+            self.search_frame, text="Personal Notes", anchor=tk.W, variable=self.search_personal_var
+        )
         self.search_desc.select()
         self.search_district.select()
 
@@ -56,11 +63,13 @@ class AdvancedSearchPopup(BasePopup):
         self.cost_fixed_var = tk.BooleanVar()
         self.cost_fixed = tk.Checkbutton(self.cost_frame, text="Fixed Fees & Services", variable=self.cost_fixed_var)
         self.cost_contingency_var = tk.BooleanVar()
-        self.cost_contingency = tk.Checkbutton(self.cost_frame, text="Contingency & Allowances", variable=self.cost_contingency_var)
+        self.cost_contingency = tk.Checkbutton(
+            self.cost_frame, text="Contingency & Allowances", variable=self.cost_contingency_var
+        )
         self.cost_g_and_a_var = tk.BooleanVar()
         self.cost_g_and_a = tk.Checkbutton(self.cost_frame, text="G&A", variable=self.cost_g_and_a_var)
 
-        self.cost_label.grid(row=0, column=0, columnspan=3,sticky=tk.W)
+        self.cost_label.grid(row=0, column=0, columnspan=3, sticky=tk.W)
         self.cost_div.grid(row=1, column=0, columnspan=3, sticky=tk.EW)
         self.cost_labor.grid(row=2, column=0, sticky=tk.W)
         self.cost_equip.grid(row=3, column=0, sticky=tk.W)
@@ -86,7 +95,7 @@ class AdvancedSearchPopup(BasePopup):
 
         self.search_button = ttk.Button(self.grid, text="Search", command=self._search)
         self.search_button.pack(side=tk.RIGHT, pady=5)
-        
+
         self.center_window(parent)
         self.deiconify()
 
