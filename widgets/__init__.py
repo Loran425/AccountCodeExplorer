@@ -1,4 +1,5 @@
 from .detail_panel import DetailView
 from .tree_panel import TreePanel
+from .placeholder_entry import PlaceholderEntry
 
-__all__ = ["DetailView", "TreePanel"]
+__all__ = ["DetailView", "TreePanel", "PlaceholderEntry"]
