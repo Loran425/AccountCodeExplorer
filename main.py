@@ -5,13 +5,14 @@ import re
 import threading
 import tkinter as tk
 from csv import DictReader, DictWriter, excel
+from functools import partial
 from pathlib import Path
 from tkinter import filedialog, ttk, BooleanVar, messagebox
 
 import screeninfo
 
 from models import AccountCode, db
-from popups import ExportPopup, ImportPopup, AboutPopup
+from popups import ExportPopup, ImportPopup, AboutPopup, AdvancedSearchPopup
 from widgets import TreePanel, DetailView
 
 
@@ -58,6 +59,10 @@ class ExplorerApp:
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.on_close, accelerator="Ctrl+Q")
 
+        self.edit_menu = tk.Menu(self.menu, tearoff=0)
+        self.menu.add_cascade(label="Edit", menu=self.edit_menu)
+        self.edit_menu.add_command(label="Advanced Search", command=partial(AdvancedSearchPopup, self.root) , accelerator="Ctrl+F")
+
         self.view_menu = tk.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label="View", menu=self.view_menu)
         self.color_hierarchy = BooleanVar(value=False)
@@ -74,6 +79,7 @@ class ExplorerApp:
         self.root.bind("<Control-o>", lambda e: self.database_open())
         self.root.bind("<Control-i>", lambda e: self.import_account_codes())
         self.root.bind("<Control-q>", lambda e: self.on_close())
+        self.root.bind("<Control-f>", lambda e: AdvancedSearchPopup(self.root))
         self.root.bind("<Control-h>", lambda e: self.color_hierarchy.set(not self.color_hierarchy.get()))
         self.root.bind("<F6>", self.select_search)
         self.root.bind("<<TreeviewSelect>>", self.on_tree_selection)
@@ -476,7 +482,6 @@ class ExplorerApp:
     def show_about(self):
         about = AboutPopup(self.root)
         self.root.wait_window(about)
-
 
 if __name__ == "__main__":
     root = tk.Tk()
