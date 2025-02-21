@@ -4,6 +4,7 @@ import tkinter as tk
 class BasePopup(tk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
+        self.iconbitmap("AccountCodeExplorer.ico")
         self.result = None
         self.withdraw()
 
