@@ -3,7 +3,7 @@ name = "AccountCodeExplorer"
 version = "1.0.4"
 description = "Account Code Explorer"
 authors = [
-    {name = "Andrew Arneson", email = "Loran425@gmail.com"}
+    {name = "Andrew Arneson", email = "Loran425@proton.me"}
 ]
 requires-python = ">=3.12"
 dependencies = [
