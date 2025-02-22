@@ -86,6 +86,7 @@ class ExplorerApp:
         self.root.bind("<F6>", self.select_search)
         self.root.bind("<<TreeviewSelect>>", self.on_tree_selection)
         self.root.bind("<Configure>", self.on_resize)
+        self.root.bind("<Button-1>", self.on_click)
 
         # Bind the close event
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -272,6 +273,12 @@ class ExplorerApp:
     def select_search(self, event=None):
         self.tree_panel.search_combobox.focus_set()
         self.tree_panel.search_combobox.selection_range(0, tk.END)
+    def on_click(self, event=None):
+        x, y = self.root.winfo_pointerxy()
+        widget = self.root.winfo_containing(x, y)
+        active_widget = self.root.focus_get()
+        if widget != active_widget:
+            self.root.focus()  # focus on root
 
     def on_close(self):
         self.detail_view.save_personal_notes(None)
