@@ -5,15 +5,14 @@ import re
 import threading
 import tkinter as tk
 from csv import DictReader, DictWriter, excel
-from functools import partial
 from pathlib import Path
-from tkinter import filedialog, ttk, BooleanVar, messagebox
+from tkinter import filedialog, ttk, BooleanVar, IntVar, messagebox
 
 import screeninfo
 
-from models import AccountCode, db
-from popups import ExportPopup, ImportPopup, AboutPopup, AdvancedSearchPopup
-from widgets import TreePanel, DetailView
+from models import AccountCode, AccountCodeIndex, db
+from popups import ExportPopup, ImportPopup, AboutPopup
+from widgets import TreePanel, DetailView, SearchView
 
 
 class ExplorerApp:
@@ -30,9 +29,15 @@ class ExplorerApp:
         # Create a PanedWindow
         self.paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
 
+        # Create the search panel frame
+        self.search_panel = ttk.Frame(self.paned_window, padding=5)
+        self.search_view = SearchView(self.search_panel)
+        self.search_view.pack(fill=tk.BOTH, expand=True)
+        self.paned_window.add(self.search_panel)
+
         # Create the side drawer frame
         self.tree_panel = TreePanel(self.paned_window)
-        self.paned_window.add(self.tree_panel.frame)
+
 
         # Create the detail view frame
         self.detail_view = DetailView(self.paned_window)
@@ -57,18 +62,19 @@ class ExplorerApp:
         self.file_menu.add_command(label="Import Personal Notes", command=self.import_notes)
         self.file_menu.add_command(label="Export Personal Notes", command=self.export_notes)
         self.file_menu.add_separator()
+        self.file_menu.add_command(label="Update Index", command=self.on_update_index)
+        self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.on_close, accelerator="Ctrl+Q")
-
-        self.edit_menu = tk.Menu(self.menu, tearoff=0)
-        self.menu.add_cascade(label="Edit", menu=self.edit_menu)
-        self.edit_menu.add_command(
-            label="Advanced Search", command=partial(AdvancedSearchPopup, self.root), accelerator="Ctrl+F"
-        )
 
         self.view_menu = tk.Menu(self.menu, tearoff=0)
         self.menu.add_cascade(label="View", menu=self.view_menu)
         self.color_hierarchy = BooleanVar(value=False)
         self.color_hierarchy.trace_add("write", self.on_color_hierarchy_change)
+        self.left_panel_mode = IntVar(value=1)  # TODO: load from config
+        self.view_menu.add_radiobutton(label="Browse Mode", value=0, variable=self.left_panel_mode)
+        self.view_menu.add_radiobutton(label="Search Mode", value=1, variable=self.left_panel_mode)
+        self.view_menu.add_separator()
+        self.left_panel_mode.trace_add("write", self.on_mode_change)
         self.view_menu.add_checkbutton(label="Color Hierarchy", variable=self.color_hierarchy, accelerator="Ctrl+H")
 
         self.about_menu = tk.Menu(self.menu, tearoff=0)
@@ -81,9 +87,11 @@ class ExplorerApp:
         self.root.bind("<Control-o>", lambda e: self.database_open())
         self.root.bind("<Control-i>", lambda e: self.import_account_codes())
         self.root.bind("<Control-q>", lambda e: self.on_close())
-        self.root.bind("<Control-f>", lambda e: AdvancedSearchPopup(self.root))
         self.root.bind("<Control-h>", lambda e: self.color_hierarchy.set(not self.color_hierarchy.get()))
-        self.root.bind("<F6>", self.select_search)
+        if self.left_panel_mode.get() == 0:
+            self.root.bind("<F6>", self.select_search)
+        elif self.left_panel_mode.get() == 1:
+            self.root.bind("<F6>", lambda e: self.search_view.search_term.focus_set())
         self.root.bind("<<TreeviewSelect>>", self.on_tree_selection)
         self.root.bind("<Configure>", self.on_resize)
         self.root.bind("<Button-1>", self.on_click)
@@ -228,7 +236,7 @@ class ExplorerApp:
         db_path = self.app_config["database"]["path"]
         db.init(db_path, pragmas={"journal_mode": "wal"})
         db.connect()
-        db.create_tables([AccountCode], safe=True)
+        db.create_tables([AccountCode, AccountCodeIndex], safe=True)
         self.update_status(f"Connected to database: {Path(db_path).absolute()}")
 
     def database_open(self):
@@ -258,21 +266,6 @@ class ExplorerApp:
     # event handlers
     #########################################################################
 
-    def on_resize(self, event=None):
-        win_width = self.paned_window.winfo_width()
-        self.paned_window.sashpos(0, win_width - 738)
-
-    def on_tree_selection(self, event=None):
-        if not self.tree_panel.tree.selection():
-            return
-        selection = self.tree_panel.tree.selection()
-        acct_code = AccountCode.get(AccountCode.account_code == selection[0])
-        if selection:
-            self.detail_view.update(acct_code)
-
-    def select_search(self, event=None):
-        self.tree_panel.search_combobox.focus_set()
-        self.tree_panel.search_combobox.selection_range(0, tk.END)
     def on_click(self, event=None):
         x, y = self.root.winfo_pointerxy()
         widget = self.root.winfo_containing(x, y)
@@ -298,6 +291,47 @@ class ExplorerApp:
 
     def on_color_hierarchy_change(self, *args):
         self.tree_panel.configure_tree_backgrounds(self.color_hierarchy.get())
+        self.search_view.configure_tree_backgrounds(self.color_hierarchy.get())
+
+    def on_mode_change(self, *args):
+        mode = self.left_panel_mode.get()
+        self.paned_window.forget(1)
+        self.paned_window.forget(0)
+        if mode == 0:
+            self.paned_window.add(self.tree_panel.frame)
+            self.paned_window.add(self.detail_view.frame)
+        elif mode == 1:
+            self.paned_window.add(self.search_panel)
+            self.paned_window.add(self.detail_view.frame)
+
+    def on_resize(self, event=None):
+        win_width = self.paned_window.winfo_width()
+        self.paned_window.sashpos(0, win_width - 738)
+
+    def on_tree_selection(self, event=None):
+        if self.left_panel_mode.get() == 0:
+            if not self.tree_panel.tree.selection():
+                return
+            selection = self.tree_panel.tree.selection()
+            acct_code = AccountCode.get(AccountCode.account_code == selection[0])
+            if selection:
+                self.detail_view.update(acct_code)
+        elif self.left_panel_mode.get() == 1:
+            if not self.search_view.results_list.selection():
+                return
+            selection = self.search_view.results_list.selection()
+            acct_code = AccountCode.get(AccountCode.account_code == selection[0])
+            if selection:
+                self.detail_view.update(acct_code)
+
+    @staticmethod
+    def on_update_index():
+        AccountCodeIndex.rebuild()
+        AccountCodeIndex.optimize()
+
+    def select_search(self, event=None):
+        self.tree_panel.search_combobox.focus_set()
+        self.tree_panel.search_combobox.selection_range(0, tk.END)
 
     #########################################################################
     # Import Processes
