@@ -1,4 +1,6 @@
 import peewee
+from playhouse.sqlite_ext import FTS5Model, SearchField, RowIDField
+
 
 from . import db
 
@@ -31,3 +33,17 @@ class AccountCode(peewee.Model):
 
     class Meta:
         database = db
+
+class AccountCodeIndex(FTS5Model):
+    rowid = RowIDField()
+    account_code = SearchField()
+    description = SearchField()
+    notes = SearchField()
+    personal_notes = SearchField()
+
+    class Meta:
+        database = db
+        options = {
+            'tokenize': 'porter',
+            'content': "AccountCode"
+        }
