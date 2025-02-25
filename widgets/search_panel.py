@@ -94,11 +94,14 @@ class SearchView(ttk.Frame):
         self.results_label.pack(fill=tk.X)
         style = ttk.Style()
         style.layout("Treeview.Heading", [])
-        self.results_list = ttk.Treeview(self.results_frame, selectmode="browse")
-        self.results_list.pack(expand=True, fill=tk.BOTH)
+        self.results_list = ttk.Treeview(self, selectmode="browse")
 
-        self.search_button = ttk.Button(self, text="Search", command=self._search)
-        self.search_button.pack(side=tk.RIGHT, pady=5, fill=tk.BOTH, expand=True)
+        self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.results_list.yview)
+        self.results_list.configure(yscrollcommand=self.scrollbar.set)
+
+        self.results_list.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
 
 
     def _search(self, event=None):
