@@ -93,13 +93,10 @@ class ExplorerApp:
         self.root.bind("<Control-i>", lambda e: self.import_account_codes())
         self.root.bind("<Control-q>", lambda e: self.on_close())
         self.root.bind("<Control-h>", lambda e: self.color_hierarchy.set(not self.color_hierarchy.get()))
-        if self.left_panel_mode.get() == 0:
-            self.root.bind("<F6>", self.select_search)
-        elif self.left_panel_mode.get() == 1:
-            self.root.bind("<F6>", lambda e: self.search_view.search_term.focus_set())
         self.root.bind("<<TreeviewSelect>>", self.on_tree_selection)
         self.root.bind("<Configure>", self.on_resize)
         self.root.bind("<Button-1>", self.on_click)
+        self.update_bindings()
 
         # Bind the close event
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -532,6 +529,13 @@ class ExplorerApp:
         about = AboutPopup(self.root)
         self.root.wait_window(about)
 
+    def update_bindings(self):
+        self.root.unbind("<F6>")
+        mode = LeftPanelMode(self.left_panel_mode.get())
+        if mode == LeftPanelMode.BROWSE:
+            self.root.bind("<F6>", self.select_search)
+        elif mode == LeftPanelMode.SEARCH:
+            self.root.bind("<F6>", lambda e: self.search_view.search_term.focus_set())
 
 if __name__ == "__main__":
     root = tk.Tk()
