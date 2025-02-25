@@ -85,7 +85,7 @@ class SearchView(ttk.Frame):
                                               state="readonly",
                                               textvariable=self.search_mode,
                                               values=["Relevance", "Account Code"])
-        self.search_mode_combo.current(0)
+        self.search_mode_combo.current(1)
         self.search_mode_combo.pack(side=tk.LEFT, padx=5)
         self.search_frame.pack(fill=tk.X)
         self.search_mode_combo.bind("<<ComboboxSelected>>", self._search)
