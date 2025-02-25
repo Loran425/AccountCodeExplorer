@@ -10,6 +10,7 @@ from tkinter import filedialog, ttk, BooleanVar, IntVar, messagebox
 
 import screeninfo
 
+from constants import LeftPanelMode
 from models import AccountCode, AccountCodeIndex, db
 from popups import ExportPopup, ImportPopup, AboutPopup
 from widgets import TreePanel, DetailView, SearchView
@@ -71,8 +72,12 @@ class ExplorerApp:
         self.color_hierarchy = BooleanVar(value=False)
         self.color_hierarchy.trace_add("write", self.on_color_hierarchy_change)
         self.left_panel_mode = IntVar(value=1)  # TODO: load from config
-        self.view_menu.add_radiobutton(label="Browse Mode", value=0, variable=self.left_panel_mode)
-        self.view_menu.add_radiobutton(label="Search Mode", value=1, variable=self.left_panel_mode)
+        self.view_menu.add_radiobutton(label="Browse Mode",
+                                       value=LeftPanelMode.BROWSE.value,
+                                       variable=self.left_panel_mode)
+        self.view_menu.add_radiobutton(label="Search Mode",
+                                       value=LeftPanelMode.SEARCH.value,
+                                       variable=self.left_panel_mode)
         self.view_menu.add_separator()
         self.left_panel_mode.trace_add("write", self.on_mode_change)
         self.view_menu.add_checkbutton(label="Color Hierarchy", variable=self.color_hierarchy, accelerator="Ctrl+H")
@@ -294,13 +299,13 @@ class ExplorerApp:
         self.search_view.configure_tree_backgrounds(self.color_hierarchy.get())
 
     def on_mode_change(self, *args):
-        mode = self.left_panel_mode.get()
+        mode = LeftPanelMode(self.left_panel_mode.get())
         self.paned_window.forget(1)
         self.paned_window.forget(0)
-        if mode == 0:
-        elif mode == 1:
+        if mode == LeftPanelMode.BROWSE:
             self.paned_window.add(self.tree_panel)
             self.paned_window.add(self.detail_view)
+        elif mode == LeftPanelMode.SEARCH:
             self.paned_window.add(self.search_view)
             self.paned_window.add(self.detail_view)
 
@@ -309,14 +314,15 @@ class ExplorerApp:
         self.paned_window.sashpos(0, win_width - 738)
 
     def on_tree_selection(self, event=None):
-        if self.left_panel_mode.get() == 0:
+        mode = LeftPanelMode(self.left_panel_mode.get())
+        if mode == LeftPanelMode.BROWSE:
             if not self.tree_panel.tree.selection():
                 return
             selection = self.tree_panel.tree.selection()
             acct_code = AccountCode.get(AccountCode.account_code == selection[0])
             if selection:
-        elif self.left_panel_mode.get() == 1:
                 self.detail_view.update_details(acct_code)
+        elif mode == LeftPanelMode.SEARCH:
             if not self.search_view.results_list.selection():
                 return
             selection = self.search_view.results_list.selection()
