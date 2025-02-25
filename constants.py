@@ -1,3 +1,5 @@
+from enum import Enum
+
 version = "1.0.4"
 
 AccountCodeFields = [
@@ -38,3 +40,11 @@ AccountCodeLevelColoring = {
     "level10": "#ce9de0",
     "level11": "#a3e4aa",
 }
+
+class LeftPanelMode(Enum):
+    BROWSE = 0
+    SEARCH = 1
+
+class SortMode(Enum):
+    RELEVANCE = 0
+    ACCOUNT_CODE = 1
