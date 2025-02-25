@@ -6,18 +6,17 @@ from constants import AccountCodeLevelColoring
 from models import AccountCode
 
 
-class TreePanel:
-    def __init__(self, parent):
-        self.frame = ttk.Frame(parent)
-        self.frame.pack(fill=tk.BOTH, expand=True)
-        self.level_button_row = ttk.Frame(self.frame)
+class TreePanel(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.level_button_row = ttk.Frame(self)
         self.level_button_row.pack(fill=tk.X)
         self.collapse_all_button = ttk.Button(self.level_button_row, text="Collapse All", command=self.collapse_all)
         self.collapse_all_button.pack(side="left")
         self.expand_all_button = ttk.Button(self.level_button_row, text="Expand All", command=self.expand_all)
         self.expand_all_button.pack(side="left", padx=5)
         self.search_var = tk.StringVar()
-        self.search_combobox = ttk.Combobox(self.frame, textvariable=self.search_var)
+        self.search_combobox = ttk.Combobox(self, textvariable=self.search_var)
         self.search_combobox.pack(fill=tk.X, padx=5, pady=5)
         self.search_combobox.bind("<FocusIn>", self.add_keyrelease_binding)
         self.search_combobox.bind("<FocusOut>", self.remove_keyrelease_binding)
@@ -25,7 +24,7 @@ class TreePanel:
 
         style = Style()
         style.layout("Treeview.Heading", [])
-        self.tree = ttk.Treeview(self.frame, selectmode="browse")
+        self.tree = ttk.Treeview(self, selectmode="browse")
         self.tree_items = []
         self.tree.pack(fill=tk.BOTH, expand=True)
 

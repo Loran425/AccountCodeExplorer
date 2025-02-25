@@ -30,18 +30,18 @@ class ExplorerApp:
         self.paned_window = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
 
         # Create the search panel frame
-        self.search_panel = ttk.Frame(self.paned_window, padding=5)
-        self.search_view = SearchView(self.search_panel)
+        self.search_view = SearchView(self.paned_window, padding=5)
         self.search_view.pack(fill=tk.BOTH, expand=True)
-        self.paned_window.add(self.search_panel)
+        self.paned_window.add(self.search_view)
 
         # Create the side drawer frame
-        self.tree_panel = TreePanel(self.paned_window)
+        self.tree_panel = TreePanel(self.paned_window, padding=5)
 
 
         # Create the detail view frame
-        self.detail_view = DetailView(self.paned_window)
-        self.paned_window.add(self.detail_view.frame)
+        self.detail_view = DetailView(self.paned_window, padding=5)
+        self.detail_view.pack(fill=tk.BOTH, expand=True)
+        self.paned_window.add(self.detail_view)
 
         self.paned_window.pack(fill=tk.BOTH, expand=True)
 
@@ -298,11 +298,11 @@ class ExplorerApp:
         self.paned_window.forget(1)
         self.paned_window.forget(0)
         if mode == 0:
-            self.paned_window.add(self.tree_panel.frame)
-            self.paned_window.add(self.detail_view.frame)
         elif mode == 1:
-            self.paned_window.add(self.search_panel)
-            self.paned_window.add(self.detail_view.frame)
+            self.paned_window.add(self.tree_panel)
+            self.paned_window.add(self.detail_view)
+            self.paned_window.add(self.search_view)
+            self.paned_window.add(self.detail_view)
 
     def on_resize(self, event=None):
         win_width = self.paned_window.winfo_width()
@@ -315,14 +315,14 @@ class ExplorerApp:
             selection = self.tree_panel.tree.selection()
             acct_code = AccountCode.get(AccountCode.account_code == selection[0])
             if selection:
-                self.detail_view.update(acct_code)
         elif self.left_panel_mode.get() == 1:
+                self.detail_view.update_details(acct_code)
             if not self.search_view.results_list.selection():
                 return
             selection = self.search_view.results_list.selection()
             acct_code = AccountCode.get(AccountCode.account_code == selection[0])
             if selection:
-                self.detail_view.update(acct_code)
+                self.detail_view.update_details(acct_code)
 
     @staticmethod
     def on_update_index():
