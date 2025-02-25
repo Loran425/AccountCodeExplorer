@@ -4,7 +4,7 @@ from tkinter import ttk
 from bitarray import bitarray
 from bitarray.util import ba2int
 
-from constants import AccountCodeLevelColoring
+from constants import AccountCodeLevelColoring, SortMode
 from models import AccountCode, AccountCodeIndex
 from .placeholder_entry import PlaceholderEntry
 
@@ -75,9 +75,22 @@ class SearchView(ttk.Frame):
         for i in range(3):
             self.cost_frame.columnconfigure(i, weight=1)
 
-        self.results_frame = ttk.Frame(self, relief=tk.SUNKEN, padding=5)
-        self.results_frame.pack(expand=True, fill=tk.BOTH)
-        self.results_label = ttk.Label(self.results_frame, text="Search Results", anchor=tk.W)
+        self.search_frame = ttk.Frame(self, padding=5)
+        self.search_button = ttk.Button(self.search_frame, text="Search", command=self._search)
+        self.search_button.pack(side=tk.LEFT, expand=True, fill=tk.X)
+        self.sort_label = ttk.Label(self.search_frame, text="Sort by")
+        self.sort_label.pack(side=tk.LEFT, padx=5)
+        self.search_mode = tk.StringVar()
+        self.search_mode_combo = ttk.Combobox(self.search_frame,
+                                              state="readonly",
+                                              textvariable=self.search_mode,
+                                              values=["Relevance", "Account Code"])
+        self.search_mode_combo.current(0)
+        self.search_mode_combo.pack(side=tk.LEFT, padx=5)
+        self.search_frame.pack(fill=tk.X)
+        self.search_mode_combo.bind("<<ComboboxSelected>>", self._search)
+
+        self.results_label = ttk.Label(self, text="Search Results", anchor=tk.W)
         self.results_label.pack(fill=tk.X)
         style = ttk.Style()
         style.layout("Treeview.Heading", [])
@@ -118,16 +131,29 @@ class SearchView(ttk.Frame):
 
         # search_terms: list of strings to search for in the account code, search for ANY word in ANY selected field
         # search_costs: bitarray of cost types to search for, & the bit array with the _flags and return if > 0
-        values = (AccountCode
-            .select(AccountCode.account_code, AccountCode.description, AccountCode.level)
-            .join(AccountCodeIndex,
-                  on=(AccountCode.id == AccountCodeIndex.rowid))
-            .where(
-                (AccountCodeIndex.match(search_phrase)) &
-                (AccountCode._flags.bin_and(search_costs))
+        search_mode = SortMode(self.search_mode_combo.current())
+        if search_mode == SortMode.RELEVANCE:
+            values = (AccountCode
+                      .select(AccountCode.account_code, AccountCode.description, AccountCode.level)
+                      .join(AccountCodeIndex,
+                            on=(AccountCode.id == AccountCodeIndex.rowid))
+                      .where(
+                          (AccountCodeIndex.match(search_phrase)) &
+                          (AccountCode._flags.bin_and(search_costs))
+                      )
+                      .order_by(AccountCodeIndex.bm25())
             )
-            .order_by(AccountCode.account_code)
-        )
+        elif search_mode == SortMode.ACCOUNT_CODE:
+            values = (AccountCode
+                .select(AccountCode.account_code, AccountCode.description, AccountCode.level)
+                .join(AccountCodeIndex,
+                      on=(AccountCode.id == AccountCodeIndex.rowid))
+                .where(
+                    (AccountCodeIndex.match(search_phrase)) &
+                    (AccountCode._flags.bin_and(search_costs))
+                )
+                .order_by(AccountCode.account_code)
+            )
 
         self.results_list.delete(*self.results_list.get_children())
 
