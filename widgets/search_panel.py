@@ -90,17 +90,19 @@ class SearchView(ttk.Frame):
         self.search_frame.pack(fill=tk.X)
         self.search_mode_combo.bind("<<ComboboxSelected>>", self._search)
 
-        self.results_label = ttk.Label(self, text="Search Results", anchor=tk.W)
+        self.results_frame = ttk.Frame(self, relief=tk.SUNKEN, padding=5)
+        self.results_label = ttk.Label(self.results_frame, text="Search Results", anchor=tk.W)
         self.results_label.pack(fill=tk.X)
         style = ttk.Style()
         style.layout("Treeview.Heading", [])
-        self.results_list = ttk.Treeview(self, selectmode="browse")
+        self.results_list = ttk.Treeview(self.results_frame, selectmode="browse")
 
-        self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.results_list.yview)
+        self.scrollbar = ttk.Scrollbar(self.results_frame, orient="vertical", command=self.results_list.yview)
         self.results_list.configure(yscrollcommand=self.scrollbar.set)
 
         self.results_list.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.results_frame.pack(expand=True, fill=tk.BOTH)
 
 
 
