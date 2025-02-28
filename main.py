@@ -342,6 +342,7 @@ class ExplorerApp:
         elif mode == LeftPanelMode.SEARCH:
             self.paned_window.add(self.search_view)
             self.paned_window.add(self.detail_view)
+        self.update_bindings()
 
     def on_resize(self, event=None):
         win_width = self.paned_window.winfo_width()
