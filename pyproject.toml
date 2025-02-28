@@ -1,6 +1,6 @@
 [project]
 name = "AccountCodeExplorer"
-version = "1.0.4"
+version = "1.0.5rc1"
 description = "Account Code Explorer"
 authors = [
     {name = "Andrew Arneson", email = "Loran425@proton.me"}

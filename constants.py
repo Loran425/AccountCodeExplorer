@@ -1,6 +1,6 @@
 from enum import Enum
 
-version = "1.0.4"
+version = "1.0.5rc1"
 
 AccountCodeFields = [
     "account_code",

@@ -131,6 +131,7 @@ class ExplorerApp:
     #########################################################################
     # Configuration and Database Management
     #########################################################################
+    # TODO: Test with old configs
 
     def config_load(self):
         appdata = Path(os.getenv("APPDATA") + "/Account Code Explorer")
