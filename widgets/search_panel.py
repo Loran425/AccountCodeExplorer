@@ -80,15 +80,15 @@ class SearchView(ttk.Frame):
         self.search_button.pack(side=tk.LEFT, expand=True, fill=tk.X)
         self.sort_label = ttk.Label(self.search_frame, text="Sort by")
         self.sort_label.pack(side=tk.LEFT, padx=5)
-        self.search_mode = tk.StringVar()
-        self.search_mode_combo = ttk.Combobox(self.search_frame,
-                                              state="readonly",
-                                              textvariable=self.search_mode,
-                                              values=["Relevance", "Account Code"])
-        self.search_mode_combo.current(1)
-        self.search_mode_combo.pack(side=tk.LEFT, padx=5)
+        self.sort_mode = tk.StringVar()
+        self.sort_mode_combo = ttk.Combobox(self.search_frame,
+                                            state="readonly",
+                                            textvariable=self.sort_mode,
+                                            values=["Relevance", "Account Code"])
+        self.sort_mode_combo.current(1)
+        self.sort_mode_combo.pack(side=tk.LEFT, padx=5)
         self.search_frame.pack(fill=tk.X)
-        self.search_mode_combo.bind("<<ComboboxSelected>>", self._search)
+        self.sort_mode_combo.bind("<<ComboboxSelected>>", self._search)
 
         self.results_frame = ttk.Frame(self, relief=tk.SUNKEN, padding=5)
         self.results_label = ttk.Label(self.results_frame, text="Search Results", anchor=tk.W)
@@ -136,7 +136,7 @@ class SearchView(ttk.Frame):
 
         # search_terms: list of strings to search for in the account code, search for ANY word in ANY selected field
         # search_costs: bitarray of cost types to search for, & the bit array with the _flags and return if > 0
-        search_mode = SortMode(self.search_mode_combo.current())
+        search_mode = SortMode(self.sort_mode_combo.current())
         if search_mode == SortMode.RELEVANCE:
             values = (AccountCode
                       .select(AccountCode.account_code, AccountCode.description, AccountCode.level)
