@@ -71,7 +71,7 @@ class ExplorerApp:
         self.menu.add_cascade(label="View", menu=self.view_menu)
         self.color_hierarchy = BooleanVar(value=False)
         self.color_hierarchy.trace_add("write", self.on_color_hierarchy_change)
-        self.left_panel_mode = IntVar(value=1)  # TODO: load from config
+        self.left_panel_mode = IntVar(value=1)
         self.view_menu.add_radiobutton(label="Browse Mode",
                                        value=LeftPanelMode.BROWSE.value,
                                        variable=self.left_panel_mode)
@@ -151,8 +151,36 @@ class ExplorerApp:
         self.config_validate()
 
     def config_validate(self):
+        if "panel" not in self.app_config:
+            print("No panel section found in config file. Creating empty section.")
+            self.app_config["panel"] = {}
+        if "window" not in self.app_config:
+            print("No window section found in config file. Creating empty section.")
+            self.app_config["window"] = {}
+        if "database" not in self.app_config:
+            print("No database section found in config file. Creating empty section.")
+            self.app_config["database"] = {}
+
         # Validate color hierarchy
-        self.color_hierarchy.set(self.app_config["tree"].get("color_hierarchy", "") == "True")
+        self.color_hierarchy.set(self.app_config["panel"].get("color_hierarchy", "") == "True")
+
+        # Validate left panel mode
+        left_panel_mode = self.app_config["panel"].get("left_panel_mode", "")
+        try:
+            left_panel_mode = int(left_panel_mode)
+        except ValueError:
+            print("Invalid left panel mode. Using default left panel mode.")
+            left_panel_mode = 1
+        self.left_panel_mode.set(left_panel_mode)
+
+        # Validate sort mode
+        sort_mode = self.app_config["panel"].get("sort_mode", "")
+        try:
+            sort_mode = int(sort_mode)
+        except ValueError:
+            print("Invalid sort mode. Using default sort mode.")
+            sort_mode = 1
+        self.search_view.sort_mode_combo.current(sort_mode)
 
         # Validate window size and position
         size = self.app_config["window"].get("size", "")
@@ -214,8 +242,10 @@ class ExplorerApp:
 
     def config_create_default(self):
         config = configparser.ConfigParser()
-        config["tree"] = {
+        config["panel"] = {
             "color_hierarchy": "False",
+            "left_panel_mode": "1",
+            "sort_mode": "Account Code",
         }
         config["window"] = {
             "size": "1440x814",
@@ -277,7 +307,14 @@ class ExplorerApp:
 
     def on_close(self):
         self.detail_view.save_personal_notes(None)
-        self.app_config.set("tree", "color_hierarchy", str(self.color_hierarchy.get()))
+
+        # Remove old config sections, remove in v1.1.0
+        if "tree" in self.app_config:
+            self.app_config.remove_section("tree")
+
+        self.app_config.set("panel", "color_hierarchy", str(self.color_hierarchy.get()))
+        self.app_config.set("panel", "left_panel_mode", str(self.left_panel_mode.get()))
+        self.app_config.set("panel", "sort_mode", str(self.search_view.sort_mode_combo.current()))
         x = self.root.winfo_x()
         y = self.root.winfo_y()
         width = self.root.winfo_width()
