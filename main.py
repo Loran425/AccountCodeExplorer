@@ -38,7 +38,6 @@ class ExplorerApp:
         # Create the side drawer frame
         self.tree_panel = TreePanel(self.paned_window, padding=5)
 
-
         # Create the detail view frame
         self.detail_view = DetailView(self.paned_window, padding=5)
         self.detail_view.pack(fill=tk.BOTH, expand=True)
@@ -72,12 +71,12 @@ class ExplorerApp:
         self.color_hierarchy = BooleanVar(value=False)
         self.color_hierarchy.trace_add("write", self.on_color_hierarchy_change)
         self.left_panel_mode = IntVar(value=1)
-        self.view_menu.add_radiobutton(label="Browse Mode",
-                                       value=LeftPanelMode.BROWSE.value,
-                                       variable=self.left_panel_mode)
-        self.view_menu.add_radiobutton(label="Search Mode",
-                                       value=LeftPanelMode.SEARCH.value,
-                                       variable=self.left_panel_mode)
+        self.view_menu.add_radiobutton(
+            label="Browse Mode", value=LeftPanelMode.BROWSE.value, variable=self.left_panel_mode
+        )
+        self.view_menu.add_radiobutton(
+            label="Search Mode", value=LeftPanelMode.SEARCH.value, variable=self.left_panel_mode
+        )
         self.view_menu.add_separator()
         self.left_panel_mode.trace_add("write", self.on_mode_change)
         self.view_menu.add_checkbutton(label="Color Hierarchy", variable=self.color_hierarchy, accelerator="Ctrl+H")
@@ -573,6 +572,7 @@ class ExplorerApp:
             self.root.bind("<F6>", self.select_search)
         elif mode == LeftPanelMode.SEARCH:
             self.root.bind("<F6>", lambda e: self.search_view.search_term.focus_set())
+
 
 if __name__ == "__main__":
     root = tk.Tk()

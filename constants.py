@@ -41,9 +41,11 @@ AccountCodeLevelColoring = {
     "level11": "#a3e4aa",
 }
 
+
 class LeftPanelMode(Enum):
     BROWSE = 0
     SEARCH = 1
+
 
 class SortMode(Enum):
     RELEVANCE = 0

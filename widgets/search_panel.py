@@ -21,14 +21,17 @@ class SearchView(ttk.Frame):
         self.search_term.pack(fill=tk.X)
 
         self.search_desc_var = tk.BooleanVar()
-        self.search_desc = tk.Checkbutton(self.search_frame, text="Description", anchor=tk.W,
-                                          variable=self.search_desc_var)
+        self.search_desc = tk.Checkbutton(
+            self.search_frame, text="Description", anchor=tk.W, variable=self.search_desc_var
+        )
         self.search_district_var = tk.BooleanVar()
-        self.search_district = tk.Checkbutton(self.search_frame, text="District Notes", anchor=tk.W,
-                                              variable=self.search_district_var)
+        self.search_district = tk.Checkbutton(
+            self.search_frame, text="District Notes", anchor=tk.W, variable=self.search_district_var
+        )
         self.search_personal_var = tk.BooleanVar()
-        self.search_personal = tk.Checkbutton(self.search_frame, text="Personal Notes", anchor=tk.W,
-                                              variable=self.search_personal_var)
+        self.search_personal = tk.Checkbutton(
+            self.search_frame, text="Personal Notes", anchor=tk.W, variable=self.search_personal_var
+        )
         self.search_desc.select()
         self.search_district.select()
 
@@ -55,8 +58,9 @@ class SearchView(ttk.Frame):
         self.cost_fixed_var = tk.BooleanVar()
         self.cost_fixed = tk.Checkbutton(self.cost_frame, text="Fixed Fees & Services", variable=self.cost_fixed_var)
         self.cost_contingency_var = tk.BooleanVar()
-        self.cost_contingency = tk.Checkbutton(self.cost_frame, text="Contingency & Allowances",
-                                               variable=self.cost_contingency_var)
+        self.cost_contingency = tk.Checkbutton(
+            self.cost_frame, text="Contingency & Allowances", variable=self.cost_contingency_var
+        )
         self.cost_ga_var = tk.BooleanVar()
         self.cost_ga = tk.Checkbutton(self.cost_frame, text="G&A", variable=self.cost_ga_var)
 
@@ -81,10 +85,9 @@ class SearchView(ttk.Frame):
         self.sort_label = ttk.Label(self.search_frame, text="Sort by")
         self.sort_label.pack(side=tk.LEFT, padx=5)
         self.sort_mode = tk.StringVar()
-        self.sort_mode_combo = ttk.Combobox(self.search_frame,
-                                            state="readonly",
-                                            textvariable=self.sort_mode,
-                                            values=["Relevance", "Account Code"])
+        self.sort_mode_combo = ttk.Combobox(
+            self.search_frame, state="readonly", textvariable=self.sort_mode, values=["Relevance", "Account Code"]
+        )
         self.sort_mode_combo.current(1)
         self.sort_mode_combo.pack(side=tk.LEFT, padx=5)
         self.search_frame.pack(fill=tk.X)
@@ -104,8 +107,6 @@ class SearchView(ttk.Frame):
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.results_frame.pack(expand=True, fill=tk.BOTH)
 
-
-
     def _search(self, event=None):
         # TODO: find a better way to call this (event?)
         AccountCodeIndex.rebuild()
@@ -118,15 +119,15 @@ class SearchView(ttk.Frame):
         }
         search_costs = bitarray(
             [
-                self.cost_ga_var.get(), # 256
-                self.cost_contingency_var.get(), # 128
-                self.cost_fixed_var.get(), # 64
-                self.cost_subcontract_var.get(), # 32
-                self.cost_materials_var.get(), # 16
-                self.cost_supplies_var.get(), # 8
-                self.cost_fom_equip_var.get(), # 4
-                self.cost_equip_var.get(), # 2
-                self.cost_labor_var.get(), # 1
+                self.cost_ga_var.get(),  # 256
+                self.cost_contingency_var.get(),  # 128
+                self.cost_fixed_var.get(),  # 64
+                self.cost_subcontract_var.get(),  # 32
+                self.cost_materials_var.get(),  # 16
+                self.cost_supplies_var.get(),  # 8
+                self.cost_fom_equip_var.get(),  # 4
+                self.cost_equip_var.get(),  # 2
+                self.cost_labor_var.get(),  # 1
             ]
         )
 
@@ -141,25 +142,17 @@ class SearchView(ttk.Frame):
             print("Empty Search Phrase, no search attempted")
             return
         if search_mode == SortMode.RELEVANCE:
-            values = (AccountCode
-                      .select(AccountCode.account_code, AccountCode.description, AccountCode.level)
-                      .join(AccountCodeIndex,
-                            on=(AccountCode.id == AccountCodeIndex.rowid))
-                      .where(
-                          (AccountCodeIndex.match(search_phrase)) &
-                          (AccountCode._flags.bin_and(search_costs))
-                      )
-                      .order_by(AccountCodeIndex.bm25())
+            values = (
+                AccountCode.select(AccountCode.account_code, AccountCode.description, AccountCode.level)
+                .join(AccountCodeIndex, on=(AccountCode.id == AccountCodeIndex.rowid))
+                .where((AccountCodeIndex.match(search_phrase)) & (AccountCode._flags.bin_and(search_costs)))
+                .order_by(AccountCodeIndex.bm25())
             )
         elif search_mode == SortMode.ACCOUNT_CODE:
-            values = (AccountCode
-                .select(AccountCode.account_code, AccountCode.description, AccountCode.level)
-                .join(AccountCodeIndex,
-                      on=(AccountCode.id == AccountCodeIndex.rowid))
-                .where(
-                    (AccountCodeIndex.match(search_phrase)) &
-                    (AccountCode._flags.bin_and(search_costs))
-                )
+            values = (
+                AccountCode.select(AccountCode.account_code, AccountCode.description, AccountCode.level)
+                .join(AccountCodeIndex, on=(AccountCode.id == AccountCodeIndex.rowid))
+                .where((AccountCodeIndex.match(search_phrase)) & (AccountCode._flags.bin_and(search_costs)))
                 .order_by(AccountCode.account_code)
             )
         else:
@@ -169,12 +162,13 @@ class SearchView(ttk.Frame):
         self.results_list.delete(*self.results_list.get_children())
 
         for value in values:
-            self.results_list.insert("",
-                                     "end",
-                                     iid=value.account_code,
-                                     text=f"{value.account_code} - {value.description}",
-                                     tags=(f"level{value.level}",),
-                                     )
+            self.results_list.insert(
+                "",
+                "end",
+                iid=value.account_code,
+                text=f"{value.account_code} - {value.description}",
+                tags=(f"level{value.level}",),
+            )
 
     def configure_tree_backgrounds(self, value=None):
         for level, color in AccountCodeLevelColoring.items():

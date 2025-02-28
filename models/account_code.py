@@ -34,6 +34,7 @@ class AccountCode(peewee.Model):
     class Meta:
         database = db
 
+
 class AccountCodeIndex(FTS5Model):
     rowid = RowIDField()
     account_code = SearchField()
@@ -43,7 +44,4 @@ class AccountCodeIndex(FTS5Model):
 
     class Meta:
         database = db
-        options = {
-            'tokenize': 'porter',
-            'content': "AccountCode"
-        }
+        options = {"tokenize": "porter", "content": "AccountCode"}
