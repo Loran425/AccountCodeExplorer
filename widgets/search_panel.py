@@ -137,6 +137,9 @@ class SearchView(ttk.Frame):
         # search_terms: list of strings to search for in the account code, search for ANY word in ANY selected field
         # search_costs: bitarray of cost types to search for, & the bit array with the _flags and return if > 0
         search_mode = SortMode(self.sort_mode_combo.current())
+        if search_terms == "":
+            print("Empty Search Phrase, no search attempted")
+            return
         if search_mode == SortMode.RELEVANCE:
             values = (AccountCode
                       .select(AccountCode.account_code, AccountCode.description, AccountCode.level)
@@ -159,6 +162,9 @@ class SearchView(ttk.Frame):
                 )
                 .order_by(AccountCode.account_code)
             )
+        else:
+            print("Invalid SortMode, defaulting to empty list")
+            values = []
 
         self.results_list.delete(*self.results_list.get_children())
 
